@@ -8,8 +8,8 @@ from model import FAGCN
 
 
 if __name__ == '__main__':
-    dataset_name = 'chameleon'
-    # dataset_name = 'Pubmed'
+    dataset_name = 'cornell'
+    # dataset_name = 'Cora'
 
     heter_dataset = ['chameleon', 'cornell', 'film', 'squirrel', 'texas', 'wisconsin']
     homo_dataset = ['Cora', 'Citeseer', 'Pubmed']
@@ -22,7 +22,15 @@ if __name__ == '__main__':
     max_epoch = 500
     patience = 200
 
+
     re_generate_train_val_test = True
+    split_by_label_flag = True
+    if dataset_name in ['chameleon', 'cornell', 'texas']:
+        split_by_label_flag = False
+
+
+
+
 
     if dataset_name in heter_dataset:
         data, num_features, num_classes = utils.load_heter_data(dataset_name)
@@ -37,10 +45,10 @@ if __name__ == '__main__':
     utils.set_seed(15)
 
     if re_generate_train_val_test:
-        idx_train, idx_val, idx_test = utils.split_nodes(data.y, 0.1, 0.1, 0.8, 15)
+        idx_train, idx_val, idx_test = utils.split_nodes(data.y, 0.8, 0.1, 0.1, 15, split_by_label_flag)
     else:
         if dataset_name in heter_dataset:
-            idx_train, idx_val, idx_test = utils.split_nodes(data.y, 0.1, 0.1, 0.8, 15)
+            idx_train, idx_val, idx_test = utils.split_nodes(data.y, 0.8, 0.1, 0.1, 15, split_by_label_flag)
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -105,6 +113,7 @@ if __name__ == '__main__':
 
     if dataset_name in homo_dataset or 'syn' in dataset_name:
         los.sort(key=lambda x: x[1])
+        print(los)
         acc = los[0][-1]
         print(acc)
     else:

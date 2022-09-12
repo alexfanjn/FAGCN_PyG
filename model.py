@@ -9,7 +9,7 @@ from torch_geometric.utils import degree
 
 class FALayer(MessagePassing):
     def __init__(self, data, num_hidden, dropout):
-        super(FALayer, self).__init__(aggr='mean')
+        super(FALayer, self).__init__(aggr='add')
         self.data = data
         self.dropout = nn.Dropout(dropout)
         self.gate = nn.Linear(2 * num_hidden, 1)

@@ -11,6 +11,9 @@ from sklearn.model_selection import train_test_split
 
 def load_heter_data(dataset_name):
     DATAPATH = 'data/heterophily_datasets_matlab'
+
+
+
     fulldata = io.loadmat(f'{DATAPATH}/{dataset_name}.mat')
     edge_index = fulldata['edge_index']
     node_feat = fulldata['node_feat']
@@ -44,13 +47,19 @@ def set_seed(seed):
     return seed
 
 
-def split_nodes(labels, train_ratio, val_ratio, test_ratio, random_state):
+def split_nodes(labels, train_ratio, val_ratio, test_ratio, random_state, split_by_label_flag):
     idx = torch.arange(labels.shape[0])
-    idx_train, idx_test = train_test_split(idx, random_state=random_state, train_size=train_ratio+val_ratio, test_size=test_ratio, stratify=labels)
+    if split_by_label_flag:
+        idx_train, idx_test = train_test_split(idx, random_state=random_state, train_size=train_ratio+val_ratio, test_size=test_ratio, stratify=labels)
+    else:
+        idx_train, idx_test = train_test_split(idx, random_state=random_state, train_size=train_ratio+val_ratio, test_size=test_ratio)
 
     if val_ratio:
         labels_train_val = labels[idx_train]
-        idx_train, idx_val = train_test_split(idx_train, random_state=random_state, train_size=train_ratio/(train_ratio+val_ratio), stratify=labels_train_val)
+        if split_by_label_flag:
+            idx_train, idx_val = train_test_split(idx_train, random_state=random_state, train_size=train_ratio/(train_ratio+val_ratio), stratify=labels_train_val)
+        else:
+            idx_train, idx_val = train_test_split(idx_train, random_state=random_state, train_size=train_ratio/(train_ratio+val_ratio))
     else:
         idx_val = None
 
