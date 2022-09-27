@@ -32,6 +32,8 @@ class FALayer(MessagePassing):
         return aggr_out
 
 
+
+
 class FAGCN(nn.Module):
     def __init__(self, data, num_features, num_hidden, num_classes, dropout, eps, layer_num=2):
         super(FAGCN, self).__init__()
